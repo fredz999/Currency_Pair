@@ -13,20 +13,53 @@ class Grid_State : ObservableObject, P__Grid_West{
     let pairData : Pair_Data
     @Published var lines : [Grid_Line_Store] = []
  
+    var currentSelectedLine : Int = 0
+    var currentSelectedCell : Int = 0
+    var currentWestX : Int = 0
     
     init(coreUI: Core_UI,pair_Data : Pair_Data,intiialWestX:Int) {
         self.coreUI = coreUI
         pairData = pair_Data
-        let lineGB = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 0)
-        let lineYen = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 1)
+        let lineGB = Grid_Line_Store(coreUI_: coreUI, lineNum_: 0)
+        let lineYen = Grid_Line_Store(coreUI_: coreUI, lineNum_: 1)
         lines.append(lineGB)
         lines.append(lineYen)
+        updateSelected()
+        for line in lines {
+            line.updateWestX(west_X_: currentWestX, pair_Data_: pairData, lineNumber_: line.lineNum)
+        }
     }
     
     func updateWestX(west_X_: Int) {
-        for line in lines {
-            line.updateWestX(west_X_: west_X_, pair_Data_: pairData, lineNumber_: line.lineNum)
+        if currentWestX != west_X_{
+            currentWestX = west_X_
+            for line in lines {
+                line.updateWestX(west_X_: west_X_, pair_Data_: pairData, lineNumber_: line.lineNum)
+            }
+            updateSelected()
         }
+    }
+    
+    var currentlySelectedCellStore : Grid_Cell_Store?
+    
+    func updateSelected(){
+        if let lclCurrentSlected = currentlySelectedCellStore{
+            if lclCurrentSlected != lines[currentSelectedLine].cells[currentSelectedCell]{
+                lclCurrentSlected.isSelected = false
+                lines[currentSelectedLine].cells[currentSelectedCell].isSelected = true
+                currentlySelectedCellStore = lines[currentSelectedLine].cells[currentSelectedCell]
+            }
+        }
+        else if currentlySelectedCellStore == nil{
+            lines[currentSelectedLine].cells[currentSelectedCell].isSelected = true
+            currentlySelectedCellStore = lines[currentSelectedLine].cells[currentSelectedCell]
+        }
+        if let lclSelected = currentlySelectedCellStore {
+            if let lclPairInfo = lclSelected.pair_Info {
+                print("lclPairInfo: \(lclPairInfo.title), index: \(lclPairInfo.index) ")
+            }
+        }
+        //print("current selected Data: \(currentlySelected)")
     }
     
 }
@@ -35,22 +68,17 @@ protocol P__Grid_West{
     func updateWestX(west_X_: Int)
 }
 
-
-
-
-
-
 class Grid_Line_Store : P__WestX_Updatable, Identifiable {
     var id = UUID()
     let coreUI : Core_UI
     let lineNum : Int
     @Published var cells = [Grid_Cell_Store]()
     
-    init(westX_:Int,coreUI_:Core_UI,lineNum_:Int){
+    init(coreUI_:Core_UI,lineNum_:Int){
         coreUI = coreUI_
         lineNum = lineNum_
         for x in 0..<coreUI.unitsPerLine {
-            let newCell = Grid_Cell_Store(west_X: westX_, xIndex: x)
+            let newCell = Grid_Cell_Store(xIndex: x)
             cells.append(newCell)
         }
     }
@@ -72,19 +100,30 @@ class Grid_Line_Store : P__WestX_Updatable, Identifiable {
 
 
 
-class Grid_Cell_Store : ObservableObject , P__WestX_Updatable, Identifiable{
+class Grid_Cell_Store : ObservableObject , P__WestX_Updatable, Identifiable,Equatable{
     var id = UUID()
-    var cell_west_X : Int //
+    static func == (lhs: Grid_Cell_Store, rhs: Grid_Cell_Store) -> Bool {
+        return lhs.id == rhs.id
+    }
+    @Published var isSelected : Bool = false
     var xIndex : Int
     @Published var pair_Info : Pair_Info?
     
-    init(west_X: Int, xIndex: Int) {
-        self.cell_west_X = west_X
+    init(xIndex: Int) {
         self.xIndex = xIndex
     }
     
+    func selectionUpdate(selectionUpdate:Bool){
+        if selectionUpdate == true{
+            isSelected = true
+        }
+        else if selectionUpdate == false{
+            isSelected = false
+        }
+    }
+    
     func updateWestX(west_X_: Int,pair_Data_ : Pair_Data,lineNumber_:Int){
-        cell_west_X = west_X_
+        //cell_west_X = west_X_
         
         let newIndex = xIndex+west_X_
         
@@ -114,7 +153,7 @@ struct Grid_Cell_View : View {
     @ObservedObject var grid_Cell_Store : Grid_Cell_Store
     let coreUI : Core_UI
     var body: some View {
-        return ZStack {
+        return ZStack(alignment: .topLeading) {
             if let lclGridCell = grid_Cell_Store.pair_Info{
                 
                 if lclGridCell.isIncrement == .greater{
@@ -126,6 +165,9 @@ struct Grid_Cell_View : View {
                 else if lclGridCell.isIncrement == .same{
                     Rectangle().fill(.gray).frame(width: coreUI.cellWidth, height: coreUI.cellHeight)
                 }
+            }
+            if grid_Cell_Store.isSelected{
+                Rectangle().fill(coreUI.limeGreen).frame(width: coreUI.cellWidth/2, height: coreUI.cellHeight/2)
             }
         }
     }

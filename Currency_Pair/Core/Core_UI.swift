@@ -11,6 +11,8 @@ class Core_UI{
     var unitOffset_X : CGFloat = 25
     var unitOffset_Y : CGFloat = 25
     
+    var limeGreen : Color = Color(red:0.5,green:1.0,blue:0.0)
+    
     var unitsPerLine : Int = 5
     static let Shared = Core_UI()
 }
