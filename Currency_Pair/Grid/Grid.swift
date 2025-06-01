@@ -7,20 +7,22 @@
 import Foundation
 import SwiftUI
 
-class Grid_State : ObservableObject , P__WestX_Updatable{
+class Grid_State : ObservableObject {
     
     let coreUI : Core_UI
     @Published var lines : [Grid_Line_Store] = []
     
     init(coreUI: Core_UI,pair_Data : Pair_Data,intiialWestX:Int) {
         self.coreUI = coreUI
-        let line0 = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI)
-        lines.append(line0)
+        let lineGB = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 0)
+        let lineYen = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 1)
+        lines.append(lineGB)
+        lines.append(lineYen)
     }
     
     func updateWestX(west_X_: Int,pair_Data_ : Pair_Data) {
         for line in lines {
-            line.updateWestX(west_X_: west_X_, pair_Data_: pair_Data_)
+            line.updateWestX(west_X_: west_X_, pair_Data_: pair_Data_, lineNumber_: line.lineNum)
         }
     }
     
@@ -35,20 +37,21 @@ class Grid_State : ObservableObject , P__WestX_Updatable{
 class Grid_Line_Store : P__WestX_Updatable, Identifiable {
     var id = UUID()
     let coreUI : Core_UI
-    
+    let lineNum : Int
     @Published var cells = [Grid_Cell_Store]()
     
-    init(westX_:Int,coreUI_:Core_UI){
+    init(westX_:Int,coreUI_:Core_UI,lineNum_:Int){
         coreUI = coreUI_
+        lineNum = lineNum_
         for x in 0..<coreUI.unitsPerLine {
             let newCell = Grid_Cell_Store(west_X: westX_, xIndex: x)
             cells.append(newCell)
         }
     }
     
-    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data){
+    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data,lineNumber_:Int){
         for cell in cells {
-            cell.updateWestX(west_X_: west_X_, pair_Data_: pair_Data_)
+            cell.updateWestX(west_X_: west_X_, pair_Data_: pair_Data_, lineNumber_: lineNum)
         }
     }
     
@@ -74,10 +77,13 @@ class Grid_Cell_Store : ObservableObject , P__WestX_Updatable, Identifiable{
         self.xIndex = xIndex
     }
     
-    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data){
+    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data,lineNumber_:Int){
         cell_west_X = west_X_
         
-        let newData = pair_Data_.pair_Array[xIndex+west_X_]
+        let newIndex = xIndex+west_X_
+        
+
+        let newData = pair_Data_.pair_Array[lineNumber_][newIndex]
         
         if let lclPair_Info = pair_Info{
         let replacement = lclPair_Info.copyWithNewVals(newTitle: newData.title
@@ -86,6 +92,8 @@ class Grid_Cell_Store : ObservableObject , P__WestX_Updatable, Identifiable{
                                          , newIsIncrement: newData.isIncrement
                                          , newIndex_: newData.index)
             pair_Info = replacement
+            
+            
         }
         else if pair_Info == nil{
             pair_Info = newData
@@ -118,5 +126,5 @@ struct Grid_Cell_View : View {
 }
 
 protocol P__WestX_Updatable {
-    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data)
+    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data,lineNumber_:Int)
 }

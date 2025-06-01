@@ -15,11 +15,21 @@ struct ContentView: View {
    
     init(){
         grid_State = Grid_State(coreUI: coreUI, pair_Data: pairData, intiialWestX: 0)
-        for i in 0..<32{
-            let val = Double.random(in: 0.7...0.8)
-            print("let p\(i.description) = Pair_Info(title_: \"usd/gbp\", value_: \(String(format: "%.3f", val)), date_: \"y'Day\", isIncrement_: .same, index_: \(i))")
-            print("pair_Array.append(p\(i.description))")
-        }
+//        for i in 0..<32{
+//            let val = Double.random(in: 0.7...0.8)
+//            print("let gb_p\(i.description) = Pair_Info(title_: \"usd/gbp\", value_: \(String(format: "%.3f", val)), date_: \"y'Day\", isIncrement_: .same, index_: \(i))")
+//            print("gb.append(gb_p\(i.description))")
+//        }
+//        
+//        for i in 0..<32{
+//            let val = Double.random(in: 0.7...0.8)
+//            print("let y_p\(i.description) = Pair_Info(title_: \"usd/gbp\", value_: \(String(format: "%.3f", val)), date_: \"y'Day\", isIncrement_: .same, index_: \(i))")
+//            print("yen.append(y_p\(i.description))")
+//        }
+        
+        
+        
+        
         grid_State.updateWestX(west_X_: 0, pair_Data_: pairData)
     }
     
@@ -28,11 +38,11 @@ struct ContentView: View {
             ForEach(grid_State.lines){lineStore in
                 ForEach(lineStore.cells){cellStore in
                     Grid_Cell_View(grid_Cell_Store: cellStore, coreUI: coreUI)
-                    .offset(x:CGFloat(cellStore.xIndex)*coreUI.unitOffset_X)
+                        .offset(x:CGFloat(cellStore.xIndex)*coreUI.unitOffset_X,y:CGFloat(lineStore.lineNum)*coreUI.unitOffset_Y)
                 }
             }
             Button(action:{
-                if uiState.westX+1 < pairData.pair_Array.count{
+                if uiState.westX+1 < pairData.pair_Array[0].count{
                     let newX = uiState.westX+1
                     grid_State.updateWestX(west_X_: newX, pair_Data_: pairData)
                     uiState.westX = newX
