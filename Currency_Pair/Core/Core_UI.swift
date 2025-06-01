@@ -11,6 +11,6 @@ class Core_UI{
     var unitOffset_X : CGFloat = 25
     var unitOffset_Y : CGFloat = 25
     
-    var unitsPerLine : Int = 3
+    var unitsPerLine : Int = 5
     static let Shared = Core_UI()
 }

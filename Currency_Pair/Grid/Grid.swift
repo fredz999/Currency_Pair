@@ -7,27 +7,33 @@
 import Foundation
 import SwiftUI
 
-class Grid_State : ObservableObject {
+class Grid_State : ObservableObject, P__Grid_West{
     
     let coreUI : Core_UI
+    let pairData : Pair_Data
     @Published var lines : [Grid_Line_Store] = []
+ 
     
     init(coreUI: Core_UI,pair_Data : Pair_Data,intiialWestX:Int) {
         self.coreUI = coreUI
+        pairData = pair_Data
         let lineGB = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 0)
         let lineYen = Grid_Line_Store(westX_: intiialWestX, coreUI_: coreUI, lineNum_: 1)
         lines.append(lineGB)
         lines.append(lineYen)
     }
     
-    func updateWestX(west_X_: Int,pair_Data_ : Pair_Data) {
+    func updateWestX(west_X_: Int) {
         for line in lines {
-            line.updateWestX(west_X_: west_X_, pair_Data_: pair_Data_, lineNumber_: line.lineNum)
+            line.updateWestX(west_X_: west_X_, pair_Data_: pairData, lineNumber_: line.lineNum)
         }
     }
     
 }
 
+protocol P__Grid_West{
+    func updateWestX(west_X_: Int)
+}
 
 
 
