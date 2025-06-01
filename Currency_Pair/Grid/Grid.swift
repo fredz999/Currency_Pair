@@ -17,6 +17,9 @@ class Grid_State : ObservableObject, P__Grid_West{
     var currentSelectedCell : Int = 0
     var currentWestX : Int = 0
     
+    var displayUpdate : P__Display_Update?
+    var currentlySelectedCellStore : Grid_Cell_Store?
+    
     init(coreUI: Core_UI,pair_Data : Pair_Data,intiialWestX:Int) {
         self.coreUI = coreUI
         pairData = pair_Data
@@ -39,9 +42,7 @@ class Grid_State : ObservableObject, P__Grid_West{
             updateSelected()
         }
     }
-    
-    var currentlySelectedCellStore : Grid_Cell_Store?
-    
+
     func updateSelected(){
         if let lclCurrentSlected = currentlySelectedCellStore{
             if lclCurrentSlected != lines[currentSelectedLine].cells[currentSelectedCell]{
@@ -56,19 +57,16 @@ class Grid_State : ObservableObject, P__Grid_West{
         }
         if let lclSelected = currentlySelectedCellStore {
             if let lclPairInfo = lclSelected.pair_Info {
-                print("lclPairInfo: \(lclPairInfo.title), index: \(lclPairInfo.index) ")
+                if let lclDisplayUpdate = displayUpdate{
+                    lclDisplayUpdate.displayUpdate(incomingData: lclPairInfo)
+                }
             }
         }
-        //print("current selected Data: \(currentlySelected)")
     }
     
 }
 
-protocol P__Grid_West{
-    func updateWestX(west_X_: Int)
-}
-
-class Grid_Line_Store : P__WestX_Updatable, Identifiable {
+class Grid_Line_Store : P__WestX_Lines, Identifiable {
     var id = UUID()
     let coreUI : Core_UI
     let lineNum : Int
@@ -91,16 +89,7 @@ class Grid_Line_Store : P__WestX_Updatable, Identifiable {
     
 }
 
-
-
-
-
-
-
-
-
-
-class Grid_Cell_Store : ObservableObject , P__WestX_Updatable, Identifiable,Equatable{
+class Grid_Cell_Store : ObservableObject , P__WestX_Lines, Identifiable,Equatable{
     var id = UUID()
     static func == (lhs: Grid_Cell_Store, rhs: Grid_Cell_Store) -> Bool {
         return lhs.id == rhs.id
@@ -173,6 +162,10 @@ struct Grid_Cell_View : View {
     }
 }
 
-protocol P__WestX_Updatable {
+protocol P__WestX_Lines {
     func updateWestX(west_X_: Int,pair_Data_ : Pair_Data,lineNumber_:Int)
+}
+
+protocol P__Grid_West{
+    func updateWestX(west_X_: Int)
 }

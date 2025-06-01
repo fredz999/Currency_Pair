@@ -29,10 +29,10 @@ struct Pair_Info{
     }
 }
 
-enum E__Increment_Status{
-    case greater
-    case lessThan
-    case same
+enum E__Increment_Status:String{
+    case greater = "increment"
+    case lessThan = "decrement"
+    case same = "same"
 }
 
 

@@ -70,7 +70,7 @@ class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "uiCell", for: indexPath)
-        cell.backgroundColor = .blue
+        cell.backgroundColor = .gray
         
         if cell.contentView.subviews.isEmpty {
             let label = UILabel(frame: cell.contentView.bounds)
