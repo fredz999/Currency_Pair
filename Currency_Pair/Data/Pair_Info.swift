@@ -9,10 +9,10 @@ struct Pair_Info{
     var title: String
     var value: Double
     var date: String
-    var isIncrement: Bool
+    var isIncrement: E__Increment_Status
     var index : Int
     
-    init(title_: String, value_: Double, date_: String, isIncrement_: Bool,index_: Int) {
+    init(title_: String, value_: Double, date_: String, isIncrement_: E__Increment_Status,index_: Int) {
         self.title = title_
         self.value = value_
         self.date = date_
@@ -20,13 +20,19 @@ struct Pair_Info{
         self.index = index_
     }
     
-    func copyWithNewVals(newTitle: String, newValue: Double, newDate: String, newIsIncrement: Bool,newIndex_: Int) -> Self {
+    func copyWithNewVals(newTitle: String, newValue: Double, newDate: String, newIsIncrement: E__Increment_Status,newIndex_: Int) -> Self {
         return Pair_Info(title_: newTitle
                          , value_: newValue
                          , date_: newDate
                          , isIncrement_: newIsIncrement
                          , index_: newIndex_)
     }
+}
+
+enum E__Increment_Status{
+    case greater
+    case lessThan
+    case same
 }
 
 

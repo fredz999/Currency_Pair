@@ -102,8 +102,16 @@ struct Grid_Cell_View : View {
     var body: some View {
         return ZStack {
             if let lclGridCell = grid_Cell_Store.pair_Info{
-                Rectangle().fill(lclGridCell.isIncrement ? Color.green : Color.red)
-                .frame(width: coreUI.cellWidth, height: coreUI.cellHeight)
+                
+                if lclGridCell.isIncrement == .greater{
+                    Rectangle().fill(.green).frame(width: coreUI.cellWidth, height: coreUI.cellHeight)
+                }
+                else if lclGridCell.isIncrement == .lessThan{
+                    Rectangle().fill(.red).frame(width: coreUI.cellWidth, height: coreUI.cellHeight)
+                }
+                else if lclGridCell.isIncrement == .same{
+                    Rectangle().fill(.gray).frame(width: coreUI.cellWidth, height: coreUI.cellHeight)
+                }
             }
         }
     }

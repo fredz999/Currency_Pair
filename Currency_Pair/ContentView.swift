@@ -13,12 +13,11 @@ struct ContentView: View {
     let uiState = UI_State()
     @ObservedObject var grid_State : Grid_State
    
-    
     init(){
         grid_State = Grid_State(coreUI: coreUI, pair_Data: pairData, intiialWestX: 0)
         for i in 0..<32{
             let val = Double.random(in: 0.7...0.8)
-            print("let p\(i.description) = Pair_Info(title_: \"usd/gbp\", value_: \(String(format: "%.3f", val)), date_: \"y'Day\", isIncrement_: false,index_: \(i))")
+            print("let p\(i.description) = Pair_Info(title_: \"usd/gbp\", value_: \(String(format: "%.3f", val)), date_: \"y'Day\", isIncrement_: .same, index_: \(i))")
             print("pair_Array.append(p\(i.description))")
         }
         grid_State.updateWestX(west_X_: 0, pair_Data_: pairData)
