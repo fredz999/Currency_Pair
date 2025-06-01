@@ -116,22 +116,25 @@ class Grid_Cell_Store : ObservableObject , P__WestX_Lines, Identifiable,Equatabl
         
         let newIndex = xIndex+west_X_
         
+        if newIndex < pair_Data_.pair_Array[0].count{
 
-        let newData = pair_Data_.pair_Array[lineNumber_][newIndex]
+            let newData = pair_Data_.pair_Array[lineNumber_][newIndex]
+            
+            if let lclPair_Info = pair_Info{
+            let replacement = lclPair_Info.copyWithNewVals(newTitle: newData.title
+                                             , newValue: newData.value
+                                             , newDate: newData.date
+                                             , newIsIncrement: newData.isIncrement
+                                             , newIndex_: newData.index)
+                pair_Info = replacement
+                
+                
+            }
+            else if pair_Info == nil{
+                pair_Info = newData
+            }
+        }
         
-        if let lclPair_Info = pair_Info{
-        let replacement = lclPair_Info.copyWithNewVals(newTitle: newData.title
-                                         , newValue: newData.value
-                                         , newDate: newData.date
-                                         , newIsIncrement: newData.isIncrement
-                                         , newIndex_: newData.index)
-            pair_Info = replacement
-            
-            
-        }
-        else if pair_Info == nil{
-            pair_Info = newData
-        }
     }
     
 }
